@@ -2,9 +2,6 @@
  * Created by alexey.shmakov on 2/2/2016.
  */
 
-var Logger = require('./Logger');
-var log = Logger.getLogger();
-
 function Signal() {
     'use strict';
     this._listeners = [
@@ -24,7 +21,7 @@ Signal.prototype.addListener = function(callback, callbackContext) {
     for(var i=0; i<listeners.length; i++) {
         var binding = listeners[i];
         if(binding.callback === callback && binding.context === callbackContext) {
-            log.warn('Attempt to add the same listener twice.');
+            console.log('Attempt to add the same listener twice.');
             return; //already hooked, no-op
         }
     }
@@ -49,7 +46,7 @@ Signal.prototype.removeListener = function(callback, callbackContext) {
     }
 
     if(removeAt === null) {
-        log.warn('Attempt to remove listener that was not added.');
+        console.log('Attempt to remove listener that was not added.');
     } else {
         listeners.splice(removeAt, 1);
     }

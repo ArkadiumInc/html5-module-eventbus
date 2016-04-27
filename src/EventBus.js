@@ -3,8 +3,6 @@
  */
 
 var EventEmitter = require('./EventEmitter');
-var Logger = require('./Logger');
-var logger = Logger.getLogger();
 
 function EventBus(){
     'use strict';
@@ -20,7 +18,6 @@ module.exports = EventBus;
 
 EventBus.prototype.registerEvent = function(eventTopic, eventName) {
     'use strict';
-    //logger.debug('EventBus.registerEvent', eventTopic, eventName);
     var topics = this._topics;
     topics[eventTopic] = topics[eventTopic] || new EventEmitter();
     topics[eventTopic].registerEvent(eventName);
@@ -28,7 +25,6 @@ EventBus.prototype.registerEvent = function(eventTopic, eventName) {
 
 EventBus.prototype.addListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
-    //logger.debug('EventBus.addListener', eventTopic, eventName);
     var eventTopic = this._ensureEventTopic(eventTopic);
     var eventEmitter = this._ensureEventTopicExists(eventTopic);
     eventEmitter.addListener(eventName, callback, callbackContext);
@@ -36,7 +32,6 @@ EventBus.prototype.addListener = function(eventTopic, eventName, callback, callb
 
 EventBus.prototype.removeListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
-    //logger.debug('EventBus.removeListener', eventTopic, eventName);
     var eventTopic = this._ensureEventTopic(eventTopic);
     var eventEmitter = this._ensureEventTopicExists(eventTopic);
     eventEmitter.removeListener(eventName, callback, callbackContext);
@@ -45,7 +40,6 @@ EventBus.prototype.removeListener = function(eventTopic, eventName, callback, ca
 
 EventBus.prototype.dispatchEvent = function(eventTopic/*, eventName, ...*/) {
     'use strict';
-    logger.debug('EventBus.dispatchEvent', eventTopic, arguments);
     var eventTopic = this._ensureEventTopic(eventTopic);
     var eventEmitter = this._ensureEventTopicExists(eventTopic);
     Array.prototype.shift.call(arguments);

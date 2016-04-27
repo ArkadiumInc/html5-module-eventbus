@@ -24,8 +24,8 @@ CallbackBinding.prototype.equals = function(/*[otherCallback] | [callback, conte
         otherCallback = arguments[0];
         otherContext = arguments[1];
     } else {
-        otherCallback = arguments[1]._callback;
-        otherContext = arguments[1]._context;
+        otherCallback = arguments[0]._callback;
+        otherContext = arguments[0]._context;
     }
     return this._callback === otherCallback && this._context === otherContext;
 }

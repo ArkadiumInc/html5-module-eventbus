@@ -1,0 +1,29 @@
+{
+  "name": "arkadium-eventbus",
+  "version": "1.0.0",
+  "description": "Realization of event bus functionality",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine-node spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArkadiumInc/html5-module-eventbus.git"
+  },
+  "keywords": [
+    "events",
+    "bus",
+    "topic",
+    "listener"
+  ],
+  "author": "Arkadium Inc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArkadiumInc/html5-module-eventbus/issues"
+  },
+  "homepage": "https://github.com/ArkadiumInc/html5-module-eventbus#readme",
+  "devDependencies": {
+    "jasmine": "^2.4.1",
+    "jasmine-node": "^1.14.5"
+  }
+}

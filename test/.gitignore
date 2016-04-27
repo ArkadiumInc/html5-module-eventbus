@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+*.db
+node_modules/
+bower_components/
+
+/dist

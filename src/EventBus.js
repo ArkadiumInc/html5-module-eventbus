@@ -2,6 +2,8 @@
  * Created by alexey.shmakov on 2/1/2016.
  */
 
+/* globals require, module */
+
 var EventEmitter = require('./EventEmitter');
 
 function EventBus(){
@@ -25,23 +27,23 @@ EventBus.prototype.registerEvent = function(eventTopic, eventName) {
 
 EventBus.prototype.addListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
-    var eventTopic = this._ensureEventTopic(eventTopic);
-    var eventEmitter = this._ensureEventTopicExists(eventTopic);
+    var ensuredEventTopic = this._ensureEventTopic(eventTopic);
+    var eventEmitter = this._ensureEventTopicExists(ensuredEventTopic);
     eventEmitter.addListener(eventName, callback, callbackContext);
 };
 
 EventBus.prototype.removeListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
-    var eventTopic = this._ensureEventTopic(eventTopic);
-    var eventEmitter = this._ensureEventTopicExists(eventTopic);
+    var ensuredEventTopic = this._ensureEventTopic(eventTopic);
+    var eventEmitter = this._ensureEventTopicExists(ensuredEventTopic);
     eventEmitter.removeListener(eventName, callback, callbackContext);
 };
 
 
 EventBus.prototype.dispatchEvent = function(eventTopic/*, eventName, ...*/) {
     'use strict';
-    var eventTopic = this._ensureEventTopic(eventTopic);
-    var eventEmitter = this._ensureEventTopicExists(eventTopic);
+    var ensuredEventTopic = this._ensureEventTopic(eventTopic);
+    var eventEmitter = this._ensureEventTopicExists(ensuredEventTopic);
     Array.prototype.shift.call(arguments);
     eventEmitter.dispatchEvent.apply(eventEmitter, arguments);
 };

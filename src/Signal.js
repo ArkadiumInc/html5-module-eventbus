@@ -2,6 +2,8 @@
  * Created by alexey.shmakov on 2/2/2016.
  */
 
+/* globals require, module*/
+
 var CallbackBinding = require('./CallbackBinding');
 
 function Signal() {

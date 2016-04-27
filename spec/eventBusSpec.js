@@ -1,4 +1,6 @@
-describe("EventBus module tests", function() {
+/* globals describe, require, beforeEach, afterEach, it, expect */
+
+describe('EventBus module tests', function() {
     'use strict';
     var EventBusModule = require('../index.js');
     var eventBus = null;
@@ -7,7 +9,7 @@ describe("EventBus module tests", function() {
     var EVENT_2 = 'event2';
 
     var TOPIC_1 = 'topic1';
-    var TOPIC_2 = 'topic2';
+    // var TOPIC_2 = 'topic2';
 
     beforeEach(function() {
         eventBus = new EventBusModule.EventBus();
@@ -18,17 +20,17 @@ describe("EventBus module tests", function() {
         eventBus = null;
     });
 
-    it("Test EventBus definition", function() {
+    it('Test EventBus definition', function() {
         expect(eventBus).not.toBe(null);
     });
 
-    it("Test EventBus events registrations", function() {
+    it('Test EventBus events registrations', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
         expect(eventBus).not.toBe(null);
     });
 
 
-    it("Test EventBus add listeners", function() {
+    it('Test EventBus add listeners', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
 
         var callback = function() {
@@ -51,11 +53,11 @@ describe("EventBus module tests", function() {
         expect(addListenerIncorrectly2).toThrow();
     });
 
-    it("Test EventBus dispatch event", function() {
+    it('Test EventBus dispatch event', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
 
-        var callback = function() {
-        };
+        // var callback = function() {
+        // };
 
         var dispacthEventCorrectly = function() {
             eventBus.dispatchEvent(TOPIC_1, EVENT_1);
@@ -69,7 +71,7 @@ describe("EventBus module tests", function() {
         expect(dispacthEventIncorrectly).toThrow();
     });
 
-    it("Test EventBus dispatch and receive event", function() {
+    it('Test EventBus dispatch and receive event', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
 
         var callbackCounter = 0;
@@ -94,7 +96,7 @@ describe("EventBus module tests", function() {
 
     });
 
-    it("Test EventBus remove listener", function() {
+    it('Test EventBus remove listener', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
 
         var callbackCounter = 0;

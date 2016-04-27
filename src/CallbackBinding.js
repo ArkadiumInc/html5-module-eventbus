@@ -1,23 +1,25 @@
+/* globals module*/
+
 function CallbackBinding(callback, context) {
-    "use strict";
+    'use strict';
     this._callback = callback;
     this._context = context;
 }
 module.exports = CallbackBinding;
 
 CallbackBinding.prototype.destroy = function() {
-    "use strict";
+    'use strict';
     this._callback = null;
     this._context = null;
-}
+};
 
 CallbackBinding.prototype.execute = function(/*arguments*/) {
-    "use strict";
+    'use strict';
     this._callback.apply(this._context, arguments);
-}
+};
 
 CallbackBinding.prototype.equals = function(/*[otherCallback] | [callback, context]*/) {
-    "use strict";
+    'use strict';
     var otherCallback = null;
     var otherContext = null;
     if(arguments.length === 2) {
@@ -28,4 +30,4 @@ CallbackBinding.prototype.equals = function(/*[otherCallback] | [callback, conte
         otherContext = arguments[0]._context;
     }
     return this._callback === otherCallback && this._context === otherContext;
-}
+};

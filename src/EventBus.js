@@ -1,11 +1,11 @@
-/**
- * Created by alexey.shmakov on 2/1/2016.
- */
-
 /* globals require, module */
 
 var EventEmitter = require('./EventEmitter');
 
+/**
+ * Event bus class
+ * @class
+ */
 function EventBus(){
     'use strict';
 
@@ -18,6 +18,12 @@ function EventBus(){
 }
 module.exports = EventBus;
 
+/**
+ * Registers an event in the event bus instance.
+ * Adding/Removing event listeners or Dispatching on unregistered event results in exception.
+ * @param {string} eventTopic - topic name for the event
+ * @param {string} eventName - name of the event in the topic
+ */
 EventBus.prototype.registerEvent = function(eventTopic, eventName) {
     'use strict';
     var topics = this._topics;
@@ -25,6 +31,14 @@ EventBus.prototype.registerEvent = function(eventTopic, eventName) {
     topics[eventTopic].registerEvent(eventName);
 };
 
+/**
+ * Adds an event listener to the event bus
+ * adding event listener for non-registered event results in exception
+ * @param {string} eventTopic - topic name for the event
+ * @param {string} eventName - name of the event in the topic
+ * @param {function} callback - callback that will be called when the event is dispatched
+ * @param {Object} [callbackContext=undefined] - context for callback to execute in, helps to avoid costly creation of listeners via .bind()
+ */
 EventBus.prototype.addListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
     var ensuredEventTopic = this._ensureEventTopic(eventTopic);
@@ -32,6 +46,14 @@ EventBus.prototype.addListener = function(eventTopic, eventName, callback, callb
     eventEmitter.addListener(eventName, callback, callbackContext);
 };
 
+/**
+ * Removes an event listener from the event bus
+ * removing event listener for non-registered event results in exception
+ * @param {string} eventTopic - topic name for the event
+ * @param {string} eventName - name of the event in the topic
+ * @param {function} callback - callback to remove in
+ * @param {Object} [callbackContext=undefined] - context for callback, to specify which callback to remove exactly since you can add same callback in a multiple contexts.
+ */
 EventBus.prototype.removeListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
     var ensuredEventTopic = this._ensureEventTopic(eventTopic);
@@ -39,7 +61,13 @@ EventBus.prototype.removeListener = function(eventTopic, eventName, callback, ca
     eventEmitter.removeListener(eventName, callback, callbackContext);
 };
 
-
+/**
+ * Dispatch a specified event
+ * dispatching a non-registered event will result in exception
+ * @param {string} eventTopic - topic name for the event to dispatch
+ * @param {string} eventName - name ofthe event in the topic to dispatch
+ * @param {...} any parameters will be passed to the callback
+ */
 EventBus.prototype.dispatchEvent = function(eventTopic/*, eventName, ...*/) {
     'use strict';
     var ensuredEventTopic = this._ensureEventTopic(eventTopic);
@@ -48,6 +76,10 @@ EventBus.prototype.dispatchEvent = function(eventTopic/*, eventName, ...*/) {
     eventEmitter.dispatchEvent.apply(eventEmitter, arguments);
 };
 
+/**
+ * Destroy the event bus
+ * make sure to call this, so all event listeners are unsubscribed and destroyed properly and not left hanging in memory
+ */
 EventBus.prototype.destroy = function(){
     var topics = this._topics;
     for(var k in topics) {

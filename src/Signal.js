@@ -1,11 +1,13 @@
-/**
- * Created by alexey.shmakov on 2/2/2016.
- */
-
 /* globals require, module*/
 
 var CallbackBinding = require('./CallbackBinding');
 
+/**
+ * Singal class
+ * Singals can have event listeners attached to them and can dispatch events to those listeners,
+ * basically implementing the observer pattern.
+ * @class
+ */
 function Signal() {
     'use strict';
     this._listeners = [//array of callback bindings
@@ -19,6 +21,12 @@ function Signal() {
 }
 module.exports = Signal;
 
+/**
+ * Adds an event listener to the singal
+ * Attempts to add same listener multiple times are ignored. There can be only 1 listener of the same type.
+ * @param {function} callback - callback that will be called when the event is dispatched
+ * @param {Object} [callbackContext=undefined] - context for callback to execute in, helps to avoid costly creation of listeners via .bind()
+ */
 Signal.prototype.addListener = function(callback, callbackContext) {
     'use strict';
     var listeners = this._listeners;
@@ -34,6 +42,12 @@ Signal.prototype.addListener = function(callback, callbackContext) {
     listeners.push(new CallbackBinding(callback, callbackContext));
 };
 
+/**
+ * Removes an event listener from the singal
+ * If listener wasn't really added before then it's no operation (just ignored).
+ * @param {function} callback - callback to remove in
+ * @param {Object} [callbackContext=undefined] - context for callback, to specify which callback to remove exactly since you can add same callback in a multiple contexts.
+ */
 Signal.prototype.removeListener = function(callback, callbackContext) {
     'use strict';
     var removeAt = null;
@@ -55,6 +69,10 @@ Signal.prototype.removeListener = function(callback, callbackContext) {
     }
 };
 
+/**
+ * Dispatch an event to all subscribed listeners
+ * @param {...} any parameters will be passed to the callback
+ */
 Signal.prototype.dispatch = function(/*...*/){
     'use strict';
     var listeners = this._listeners;
@@ -64,6 +82,10 @@ Signal.prototype.dispatch = function(/*...*/){
     }
 };
 
+/**
+ * Destroy the signal
+ * make sure to call this, so all event listeners are unsubscribed and destroyed properly and not left hanging in memory
+ */
 Signal.prototype.destroy = function() { //removes all listeners
     var listeners = this._listeners;
     while(listeners.length) {

@@ -29,9 +29,56 @@ describe('EventBus module tests', function() {
         expect(eventBus).not.toBe(null);
     });
 
+    it('Test EventBus empty validation', function() {
+        var validateEmptyEventBus = function() {
+            eventBus.validate();
+        };
 
-    it('Test EventBus add listeners', function() {
+        expect(validateEmptyEventBus).not.toThrow();
+        expect(eventBus).not.toBe(null);
+    });
+
+    it('Test EventBus validation with event registered', function() {
+        var registerEventInEventBus = function() {
+            eventBus.registerEvent(TOPIC_1, EVENT_1);
+        };
+
+        var validateEventBusWithRegisteredEvent = function() {
+            eventBus.validate();
+        };
+
+        expect(registerEventInEventBus).not.toThrow();
+        expect(validateEventBusWithRegisteredEvent).not.toThrow();
+        expect(eventBus).not.toBe(null);
+    });
+
+    it('Test EventBus add listeners before validated', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
+
+        var callback = function() {
+        };
+
+        var addListenerCorrectly = function() {
+            eventBus.addListener(TOPIC_1, EVENT_1, callback, this);
+        };
+
+        //incorret listeners won't throw until the eventbus is validated
+        var addListenerIncorrectly1 = function() {
+            eventBus.addListener(TOPIC_1, EVENT_2, callback, this);
+        };
+
+        var addListenerIncorrectly2 = function() {
+            eventBus.addListener('unknownTopic', EVENT_1, callback, this);
+        };
+
+        expect(addListenerCorrectly).not.toThrow();
+        expect(addListenerIncorrectly1).not.toThrow();
+        expect(addListenerIncorrectly2).not.toThrow();
+    });
+
+    it('Test EventBus add listeners after validated', function() {
+        eventBus.registerEvent(TOPIC_1, EVENT_1);
+        eventBus.validate();
 
         var callback = function() {
         };
@@ -53,8 +100,28 @@ describe('EventBus module tests', function() {
         expect(addListenerIncorrectly2).toThrow();
     });
 
-    it('Test EventBus dispatch event', function() {
+
+    it('Test EventBus dispatch event before validated', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
+
+        // var callback = function() {
+        // };
+
+        var dispacthEventCorrectly = function() {
+            eventBus.dispatchEvent(TOPIC_1, EVENT_1);
+        };
+
+        var dispacthEventIncorrectly = function() {
+            eventBus.dispatchEvent(TOPIC_1, EVENT_2);
+        };
+
+        expect(dispacthEventCorrectly).toThrow();
+        expect(dispacthEventIncorrectly).toThrow();
+    });
+
+    it('Test EventBus dispatch event after validated', function() {
+        eventBus.registerEvent(TOPIC_1, EVENT_1);
+        eventBus.validate();
 
         // var callback = function() {
         // };
@@ -71,8 +138,34 @@ describe('EventBus module tests', function() {
         expect(dispacthEventIncorrectly).toThrow();
     });
 
-    it('Test EventBus dispatch and receive event', function() {
+    it('Test EventBus dispatch and receive event before validated', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
+
+        var callbackCounter = 0;
+
+        var callback = function() {
+            callbackCounter++;
+        };
+
+        var addListenerCorrectly = function() {
+            eventBus.addListener(TOPIC_1, EVENT_1, callback, this);
+        };
+
+        var dispacthEventCorrectly = function() {
+            eventBus.dispatchEvent(TOPIC_1, EVENT_1);
+        };
+
+        expect(addListenerCorrectly).not.toThrow();
+        expect(dispacthEventCorrectly).toThrow();
+        expect(callbackCounter).toBe(0);
+        expect(dispacthEventCorrectly).toThrow();
+        expect(callbackCounter).toBe(0);
+
+    });
+
+    it('Test EventBus dispatch and receive event after validated', function() {
+        eventBus.registerEvent(TOPIC_1, EVENT_1);
+        eventBus.validate();
 
         var callbackCounter = 0;
 
@@ -96,8 +189,41 @@ describe('EventBus module tests', function() {
 
     });
 
-    it('Test EventBus remove listener', function() {
+    it('Test EventBus remove listener before validated', function() {
         eventBus.registerEvent(TOPIC_1, EVENT_1);
+
+
+        var callbackCounter = 0;
+
+        var callback = function() {
+            callbackCounter++;
+        };
+
+        var addListenerCorrectly = function() {
+            eventBus.addListener(TOPIC_1, EVENT_1, callback, this);
+        };
+
+        var dispacthEventCorrectly = function() {
+            eventBus.dispatchEvent(TOPIC_1, EVENT_1);
+        };
+
+        var removeListenerCorrectly = function() {
+            eventBus.removeListener(TOPIC_1, EVENT_1, callback, this);
+        };
+
+        expect(addListenerCorrectly).not.toThrow();
+        expect(dispacthEventCorrectly).toThrow();
+        expect(callbackCounter).toBe(0);
+        expect(dispacthEventCorrectly).toThrow();
+        expect(callbackCounter).toBe(0);
+        expect(removeListenerCorrectly).not.toThrow();
+        expect(dispacthEventCorrectly).toThrow();
+        expect(callbackCounter).toBe(0);
+    });
+
+    it('Test EventBus remove listener after validated', function() {
+        eventBus.registerEvent(TOPIC_1, EVENT_1);
+        eventBus.validate();
 
         var callbackCounter = 0;
 

@@ -15,8 +15,52 @@ function EventBus(){
         topic2: eventEmitter
          */
     };
+
+    this._validated = false;
+
+    this._registeredEvents = [
+        /*
+        ["topicName", "eventName"],
+        ["topicName", "eventName"]
+        */
+    ];
+
+    this._addedListeners = [
+        /*
+        ["topicName", "eventName", callback, context],
+        ["topicName", "eventName", callback, context]
+        */
+    ];
 }
 module.exports = EventBus;
+
+/**
+ * EventBus needs to be validated before dispatching any events
+ * This is a measure to allow registering events and adding listeners in places where they logically belong,
+ * instead of making a spaghetti style code for event registration all in one place.
+ */
+EventBus.prototype.validate = function() {
+    this._validated = true;
+
+    var i, topicName, eventName, callback, callbackContext;
+
+    for(i=0; i<this._registeredEvents.length; i++) {
+        topicName = this._registeredEvents[i][0];
+        eventName = this._registeredEvents[i][1];
+        this.registerEvent(topicName, eventName);
+    }
+
+    for(i=0; i<this._addedListeners.length; i++) {
+        topicName = this._addedListeners[i][0];
+        eventName = this._addedListeners[i][1];
+        callback = this._addedListeners[i][2];
+        callbackContext = this._addedListeners[i][3];
+        this.addListener(topicName, eventName, callback, callbackContext);
+    }
+
+    this._registeredEvents = null; //FIXME: ensure this is memory-leak-safe
+    this._addedListeners = null;
+};
 
 /**
  * Registers an event in the event bus instance.
@@ -26,6 +70,11 @@ module.exports = EventBus;
  */
 EventBus.prototype.registerEvent = function(eventTopic, eventName) {
     'use strict';
+    if(!this._validated) {
+        this._registeredEvents.push([eventTopic, eventName]);
+        return;
+    }
+
     var topics = this._topics;
     topics[eventTopic] = topics[eventTopic] || new EventEmitter();
     topics[eventTopic].registerEvent(eventName);
@@ -41,6 +90,11 @@ EventBus.prototype.registerEvent = function(eventTopic, eventName) {
  */
 EventBus.prototype.addListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
+    if(!this._validated) {
+        this._addedListeners.push([eventTopic, eventName, callback, callbackContext]);
+        return;
+    }
+
     var ensuredEventTopic = this._ensureEventTopic(eventTopic);
     var eventEmitter = this._ensureEventTopicExists(ensuredEventTopic);
     eventEmitter.addListener(eventName, callback, callbackContext);
@@ -56,6 +110,24 @@ EventBus.prototype.addListener = function(eventTopic, eventName, callback, callb
  */
 EventBus.prototype.removeListener = function(eventTopic, eventName, callback, callbackContext) {
     'use strict';
+    if(!this._validated) {
+        var removeAt = null;
+
+        for(var i=0; i<this._addedListeners.length; i++) {
+            var listener = this._addedListeners[i];
+            if(listener[0] === eventTopic && listener[1] === eventName &&
+               listener[2] === callback && listener[3] === callbackContext) {
+                   removeAt = i;
+                   break;
+            }
+        }
+
+        if(removeAt !== null) {
+            this._addedListeners.splice(removeAt, 1); //FIXME: ensure this is memory-leak-safe
+        }
+        return;
+    }
+
     var ensuredEventTopic = this._ensureEventTopic(eventTopic);
     var eventEmitter = this._ensureEventTopicExists(ensuredEventTopic);
     eventEmitter.removeListener(eventName, callback, callbackContext);
@@ -64,12 +136,17 @@ EventBus.prototype.removeListener = function(eventTopic, eventName, callback, ca
 /**
  * Dispatch a specified event
  * dispatching a non-registered event will result in exception
+ * Also NOTE: .validate() needs to be called before any event dispatch can happen, otherwise you'll be greeted with an exception :)
  * @param {string} eventTopic - topic name for the event to dispatch
  * @param {string} eventName - name ofthe event in the topic to dispatch
  * @param {...} any parameters will be passed to the callback
  */
 EventBus.prototype.dispatchEvent = function(eventTopic/*, eventName, ...*/) {
     'use strict';
+    if(!this._validated) {
+        throw new Error('Call .validate() on eventbus before dispatching events.');
+    }
+
     var ensuredEventTopic = this._ensureEventTopic(eventTopic);
     var eventEmitter = this._ensureEventTopicExists(ensuredEventTopic);
     Array.prototype.shift.call(arguments);
@@ -89,6 +166,10 @@ EventBus.prototype.destroy = function(){
             topics[k] = null;
         }
     }
+
+    this._validated = false;
+    this._registeredEvents = null;
+    this._addedListeners = null;
 };
 
 

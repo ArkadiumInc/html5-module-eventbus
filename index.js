@@ -1,5 +1,8 @@
+/* globals module, require */
+
 module.exports = {
 	EventBus : require('./src/EventBus'),
-	EventEmmitter: require('./src/EventEmitter'),
-	Signal: require('./src/Signal')
+	EventEmitter: require('./src/EventEmitter'),
+	Signal: require('./src/Signal'),
+	CallbackBinding: require('./src/CallbackBinding')
 };

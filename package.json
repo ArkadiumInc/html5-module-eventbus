@@ -1,7 +1,7 @@
 {
   "name": "arkadium-eventbus",
   "version": "1.0.0",
-  "description": "Realization of event bus functionality",
+  "description": "Implementation of event bus functionality",
   "main": "index.js",
   "scripts": {
     "test": "jasmine-node spec"
